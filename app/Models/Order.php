@@ -76,39 +76,31 @@ class Order extends Model
         });
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function Items(){
-        return $this->hasMany(Order::class);
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
-    public static function findAvailableNo(){
+    public static function findAvailableNo()
+    {
+        // 订单流水号前缀
         $prefix = date('YmdHis');
-        for ($i = 0; $i < 10; $i++){
+        for ($i = 0; $i < 10; $i++) {
+            // 随机生成 6 位的数字
             $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-            if (!static::query()->where('no', $no)->exists()){
+            // 判断是否已经存在
+            if (!static::query()->where('no', $no)->exists()) {
                 return $no;
             }
-            \Log::warning('find order no failed');
-            return false;
         }
-    }
+        \Log::warning('find order no failed');
 
-    public function decreaseStock($amount){
-        if ($amount < 0) {
-            throw new InternalException('减库存不可小于0');
-        }
-        return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
-    }
-
-    public function addStock($amount)
-    {
-        if ($amount < 0) {
-            throw new InternalException('加库存不可小于0');
-        }
-        $this->increment('stock', $amount);
+        return false;
     }
 
 }
