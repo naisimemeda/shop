@@ -32,7 +32,15 @@ class OrdersController extends Controller
     {
         $user    = $request->user();
         $address = UserAddress::find($request->input('address_id'));
-
         return $orderService->store($user, $address, $request->input('remark'), $request->input('items'));
+    }
+
+    public function received(Order $order, Request $request){
+        $this->authorize('own', $order);
+        if ($order->ship_status !== Order::SHIP_STATUS_DELIVERED) {
+            throw new InvalidRequestException('发货状态不正确');
+        }
+        $order->update(['ship_status' => Order::SHIP_STATUS_RECEIVED]);
+        return $order;
     }
 }
