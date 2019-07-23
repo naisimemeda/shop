@@ -73,6 +73,12 @@
                                 <div class="value">￥{{ $order->total_amount }}</div>
                             </div>
                             <div>
+                                @if(isset($order->extra['refund_disagree_reason']))
+                                    <div>
+                                        <span>拒绝退款理由：</span>
+                                        <div class="value">{{ $order->extra['refund_disagree_reason'] }}</div>
+                                    </div>
+                                @endif
                                 <span>订单状态：</span>
                                 <div class="value">
                                     @if($order->paid_at)
